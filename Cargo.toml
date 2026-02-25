@@ -1,0 +1,28 @@
+[package]
+name = "progcheck"
+version = "0.1.6"
+edition = "2024"
+rust-version = "1.85"
+description = "Run commands sequentially and stop on first failure with truncated output replay."
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+documentation = "https://docs.rs/progcheck"
+repository = "https://github.com/ilya-epifanov/progcheck"
+keywords = ["cli", "command", "ci", "validation", "checks"]
+include = [
+  "/src/**/*",
+  "/Cargo.toml",
+  "/Cargo.lock",
+  "/README.md",
+  "/LICENSE-MIT",
+  "/LICENSE-APACHE",
+]
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+shlex = "1"
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
