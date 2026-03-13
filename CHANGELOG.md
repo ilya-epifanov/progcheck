@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7](https://github.com/ilya-epifanov/progcheck/compare/v0.1.6...v0.1.7) - 2026-03-13
+
+### Other
+
+- minor code cleanup
+
 ## [0.1.6](https://github.com/ilya-epifanov/progcheck/tree/v0.1.6) - 2026-03-31
 
 ### Other
