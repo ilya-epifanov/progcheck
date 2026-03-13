@@ -111,6 +111,31 @@ impl CapturedOutput {
             tail: Vec::new(),
         }
     }
+
+    fn print(&self) {
+        let mut stdout = std::io::stdout();
+        let mut stderr = std::io::stderr();
+
+        if self.truncated {
+            let omitted = self.total_len.saturating_sub(self.limit);
+            eprintln!(
+                "Output truncated: omitted {omitted} characters; showing first {} and last {} characters.",
+                self.head_limit, self.tail_limit
+            );
+        }
+
+        for fragment in &self.head {
+            write_fragment(&mut stdout, &mut stderr, fragment);
+        }
+
+        if self.truncated {
+            let _ = stderr.write_all(b"\n... output in the middle omitted ...\n");
+        }
+
+        for fragment in &self.tail {
+            write_fragment(&mut stdout, &mut stderr, fragment);
+        }
+    }
 }
 
 struct OutputBuffer {
@@ -162,10 +187,6 @@ impl OutputBuffer {
     }
 
     fn push_head(&mut self, stream: Stream, data: &[u8]) {
-        if data.is_empty() {
-            return;
-        }
-
         if let Some(last) = self.head.last_mut()
             && last.stream == stream
         {
@@ -387,30 +408,7 @@ fn main() {
 
         if exit_code != 0 {
             eprintln!("FAILED: {cmd_str}");
-
-            let mut stdout = std::io::stdout();
-            let mut stderr = std::io::stderr();
-
-            if output.truncated {
-                let omitted = output.total_len.saturating_sub(output.limit);
-                eprintln!(
-                    "Output truncated: omitted {omitted} characters; showing first {} and last {} characters.",
-                    output.head_limit, output.tail_limit
-                );
-            }
-
-            for fragment in &output.head {
-                write_fragment(&mut stdout, &mut stderr, fragment);
-            }
-
-            if output.truncated {
-                let _ = stderr.write_all(b"\n... output in the middle omitted ...\n");
-            }
-
-            for fragment in &output.tail {
-                write_fragment(&mut stdout, &mut stderr, fragment);
-            }
-
+            output.print();
             std::process::exit(exit_mode.code(exit_code));
         }
     }
